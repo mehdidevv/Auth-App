@@ -21,7 +21,7 @@ const emailUniqueness = (req, res, next) =>
     if (!user) {
       next();
     } else {
-      return res.status(422).json({ message: "email already in use" });
+      return res.status(422).json({ errors: ["email already in use"] });
     }
   });
 

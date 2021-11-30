@@ -1,11 +1,24 @@
 <script>
   import { goto } from "@sapper/app.mjs";
+  import { onMount } from "svelte";
   let name = "",
     email = "",
-    password = "";
-
+    password = "",
+    errors = [];
+  onMount(async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:3001/isAuth", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const content = await response.json();
+    if (content.isAuth) await goto("/");
+  });
   const submit = async () => {
-    await fetch("http://localhost:3001/register", {
+    const response = await fetch("http://localhost:3001/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,10 +29,17 @@
         password,
       }),
     });
-    await goto("/login");
+    const content = await response.json();
+    if ((await content.errors.length) > 0) errors = await content.errors;
+    else await goto("/login");
   };
 </script>
 
+{#each errors as error}
+  <div class="alert alert-danger" style="width: 60%;" role="alert">
+    {error}
+  </div>
+{/each}
 <div id="formContent">
   <!-- Register Form -->
   <form on:submit|preventDefault={submit}>

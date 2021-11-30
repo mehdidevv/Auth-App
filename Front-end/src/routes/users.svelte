@@ -1,9 +1,20 @@
 <script>
+  import { goto } from "@sapper/app.mjs";
   import { onMount } from "svelte";
   import UserCard from "../components/UserCard.svelte";
   let users = [];
   onMount(async () => {
     const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:3001/isAuth", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const content = await response.json();
+    if (!content.isAuth) await goto("/login");
+
     try {
       const response = await fetch("http://localhost:3001/users", {
         method: "GET",

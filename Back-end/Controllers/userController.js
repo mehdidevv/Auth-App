@@ -3,6 +3,14 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { body } = require("express-validator");
 
+const isAuth = (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.json({ isAuth: false });
+  });
+  return res.json({ isAuth: true });
+};
 const getUsers = (req, res) => {
   User.find({}, function (err, users) {
     res.json(users);
@@ -38,9 +46,9 @@ const login = (req, res) => {
             process.env.ACCESS_TOKEN_SECRET
           );
           res.json({ acessToken: acessToken });
-        } else res.json({ message: "password doesn't match" });
+        } else res.json({ errors: ["password doesn't match"] });
       });
-    } else res.json({ message: "User not found" });
+    } else res.json({ errors: ["User not found"] });
   });
 };
 const register = async (req, res) => {
@@ -52,7 +60,7 @@ const register = async (req, res) => {
       password: hashedPassword,
     });
     user.save();
-    res.status(201).send();
+    res.json({ errors: [] });
   } catch {
     res.status(500).send();
   }
@@ -63,4 +71,5 @@ module.exports = {
   login,
   logout,
   register,
+  isAuth,
 };

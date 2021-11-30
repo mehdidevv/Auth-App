@@ -7,9 +7,16 @@
     auth = false;
   onMount(async () => {
     const token = localStorage.getItem("token");
-    auth =
-      localStorage.getItem("token") !== null &&
-      localStorage.getItem("token") !== "undefined";
+    const response = await fetch("http://localhost:3001/isAuth", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const content = await response.json();
+    if (!content.isAuth) await goto("/login");
+    auth = content.isAuth;
     try {
       const response = await fetch("http://localhost:3001/user", {
         method: "GET",

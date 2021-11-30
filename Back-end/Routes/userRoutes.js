@@ -13,6 +13,7 @@ router.get("/users", checkAuth, userController.getUsers);
 router.get("/user", checkAuth, userController.getUser);
 router.post("/login", userController.login);
 router.get("/logout", userController.logout);
+router.get("/isAuth", userController.isAuth);
 
 router.post(
   "/register",

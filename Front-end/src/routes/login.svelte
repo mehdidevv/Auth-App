@@ -1,26 +1,34 @@
 <script>
   import { goto } from "@sapper/app.mjs";
+  import { onMount } from "svelte";
   let name = "",
     password = "";
-
+  onMount(async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch("http://localhost:3001/isAuth", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const content = await response.json();
+    if (content.isAuth) await goto("/");
+  });
   const submit = async () => {
-    if (localStorage.getItem("token") === null) {
-      const response = await fetch("http://localhost:3001/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          password,
-        }),
-      });
-      const content = await response.json();
-      localStorage.setItem("token", content.acessToken);
-      await goto("/");
-    } else {
-      goto("/");
-    }
+    const response = await fetch("http://localhost:3001/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        password,
+      }),
+    });
+    const content = await response.json();
+    localStorage.setItem("token", content.acessToken);
+    await goto("/");
   };
 </script>
 
