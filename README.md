@@ -12,8 +12,8 @@ To run this project :
     <li> Run npm run dev (Now your front-server will be running on port 3000 ) </li>
     <li>you can access your application using : http://localhost:3000/</li>
     <p>You can create your own account or use this default account. You can log in using your name and the password</p>
-    <p>
+</ul>
+<h4>
         Login Name : User
         Password : defaultuser
-    </p>
-</ul>
+</h4>
